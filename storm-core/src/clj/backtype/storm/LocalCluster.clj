@@ -71,6 +71,10 @@
   [this]
   (.getClusterInfo (:nimbus (. this state))))
 
+(defn -getSupervisorWorkers
+  [this id]
+  (.getSupervisorWorkers (:nimbus (.this state))))
+
 (defn -getTopologyInfo
   [this id]
   (.getTopologyInfo (:nimbus (. this state)) id))
