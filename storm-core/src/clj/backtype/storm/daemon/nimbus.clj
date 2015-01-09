@@ -1254,6 +1254,32 @@
                            nimbus-uptime
                            topology-summaries)
           ))
+
+      (^SupervisorWorkers getSupervisorWorkers[this ^String supervisor-id]
+        (let [storm-cluster-state (:storm-cluster-state nimbus)
+              supervisor-info (.supervisorInfo storm-cluster-state supervisor-id nil)
+              bases (topology-bases storm-cluster-state)
+              worker-summaries (dofor [[id base] bases :when base]
+                                          (let [assignment (.assignment-info storm-cluster-state id nil)
+                                                topology-conf (try-read-storm-conf conf id)
+                                                topology (read-storm-topology conf id)
+                                                task->component (storm-task-info topology topology-conf)
+                                                executor-summaries (dofor [[executor [node port]] (:executor->node+port assignment)]
+                                                                            (let [host (-> assignment :node->host (get node))
+                                                                                  
+                                                                                 ]
+                                                                                  worker-summ (WorkerSummary. port id executor)
+                                                                            )
+                                                                   )
+                                               ]
+                                         )
+                               )
+             
+             
+        ]
+       (SupervisorWorkers. supervisor-summary worker-summaries)   
+      )
+     
       
       (^TopologyInfo getTopologyInfo [this ^String storm-id]
         (let [storm-cluster-state (:storm-cluster-state nimbus)

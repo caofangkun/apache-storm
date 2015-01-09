@@ -1,0 +1,98 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<!--
+ Licensed to the Apache Software Foundation (ASF) under one or more
+ contributor license agreements.  See the NOTICE file distributed with
+ this work for additional information regarding copyright ownership.
+ The ASF licenses this file to You under the Apache License, Version 2.0
+ (the "License"); you may not use this file except in compliance with
+ the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+
+<html><head>
+<meta charset="UTF-8">
+<title>Storm UI</title>
+<link href="/css/bootstrap-1.4.0.css" rel="stylesheet" type="text/css">
+<link href="/css/style.css" rel="stylesheet" type="text/css">
+<script src="/js/jquery-1.6.2.min.js" type="text/javascript"></script>
+<script src="/js/jquery.tablesorter.min.js" type="text/javascript"></script>
+<script src="/js/jquery.cookies.2.2.0.min.js" type="text/javascript"></script>
+<script src="/js/jquery.mustache.js" type="text/javascript"></script>
+<script src="/js/url.min.js" type="text/javascript"></script>
+<script src="/js/bootstrap-twipsy.js" type="text/javascript"></script>
+<script src="/js/jquery.blockUI.min.js" type="text/javascript"></script>
+<script src="/js/script.js" type="text/javascript"></script>
+<script src="/js/visualization.js" type="text/javascript"></script>
+<script src="/js/arbor.js" type="text/javascript"></script>
+<script src="/js/arbor-graphics.js" type="text/javascript"></script>
+</head>
+<body>
+<div id="ui-user">
+</div>
+<h1><a href="/">Storm UI</a></h1>
+<h2>Supervisor summary</h2>
+<div id="supervisor-summary">
+</div>
+<div id="workers-summary">
+</div>
+<p id="toggle-switch" style="display: block;" class="js-only"></p>
+<div id="json-response-error">
+</div>
+<div id="anti-forgery-token" class="anti-forgery-token">
+</div>
+</body>
+<script>
+$(document).ajaxStop($.unblockUI);
+$(document).ready(function() {
+    var supervisorId = $.url("?id");
+    var window = $.url("?window");
+    var sys = $.cookies.get("sys") || "false";
+    var url = "/api/v1/supervisor/"+supervisorId+"?sys="+sys;
+    if(window) url += "&window="+window;
+    renderToggleSys($("#toggle-switch"));
+    $.ajaxSetup({
+        "error":function(jqXHR,textStatus,response) {
+            var errorJson = jQuery.parseJSON(jqXHR.responseText);
+            $.get("/templates/json-error-template.html", function(template) {
+                $("#json-response-error").append(Mustache.render($(template).filter("#json-error-template").html(),errorJson));
+            });
+        }
+    });
+
+    $.getJSON(url,function(response,status,jqXHR) {
+        var uiUser = $("#ui-user");
+        $.get("/templates/user-template.html", function(template) {
+            uiUser.append(Mustache.render($(template).filter("#user-template").html(),response));
+        });
+
+        var antiForgeryToken = $("#anti-forgery-token");
+        $.get("/templates/anti-forgery-template.html", function(template) {
+            antiForgeryToken.append(Mustache.render($(template).filter("#anti-forgery-template").html(),response));
+        });
+
+        var supervisorSummary = $("#supervisor-summary");
+        var workersSummary = $("#workers-summary");
+        $.get("/templates/supervisor-page-template.html", function(template) {
+            supervisorSummary.append(Mustache.render($(template).filter("#supervisor-summary-template").html(),response));
+            workersSummary.append(Mustache.render($(template).filter("#workers-summary-template").html(),response));
+            var errorCells = document.getElementsByClassName("errorSpan");
+            for (i =0; i < errorCells.length; i++)
+            {
+              var timeLapsedInSecs = errorCells[i].id;
+              if (parseInt(timeLapsedInSecs) < 1800) {
+                errorCells[i].style.color = "#9d261d";
+                errorCells[i].style.borderBottomColor = "#9d261d";
+              }
+            }
+        });
+    });
+ });
+</script>
+</html>
