@@ -73,7 +73,7 @@
 
 (defn -getSupervisorWorkers
   [this id]
-  (.getSupervisorWorkers (:nimbus (.this state))))
+  (.getSupervisorWorkers (:nimbus (.this state)) id))
 
 (defn -getTopologyInfo
   [this id]
