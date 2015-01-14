@@ -510,6 +510,15 @@
         "executorsTotal" total-executors
         "tasksTotal" total-tasks })))
 
+defn storm-version []
+  ({"version" (str (VersionInfo/getVersion))
+    "revision" (str (VersionInfo/getRevision))
+    "branch" (str (VersionInfo/getBranch))
+    "user" (str (VersionInfo/getUser))
+    "date" (str (VersionInfo/getDate))
+    "url" (str (VersionInfo/getUrl))
+    "srcChecksum" (str (VersionInfo/getSrcChecksum))})
+   
 (defn supervisor-summary
   ([]
    (with-nimbus nimbus
