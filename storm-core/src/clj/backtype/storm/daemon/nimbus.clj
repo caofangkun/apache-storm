@@ -469,6 +469,21 @@
                                          all-executors
                                          (set (alive-executors nimbus topology-details all-executors assignment)))]]
              {tid alive-executors})))
+
+(defn- compute-port->worker-summaries [existing-assignments topology->executors supervisor-id]
+  (let worker-summaries (into [] (for [[tid assignment] existing-assignments
+                                       :let [all-executors (topology->executors tid)
+                                             port->worker-summ (dofor [[executor [node port]] (:executor->node+port assignment)]
+                                                                            (let [host (-> assignment :node->host (get node))]
+                                                                                  if (= supervisor-id node)
+                                                                                     ()
+                                                                                     () 
+                                                                                  worker-summ (WorkerSummary. port storm-id executor)))
+                                                                       
+
+                                             ]]
+                                  worker-summaries))
+       port->worker-summaries (->> )))
   
 (defn- compute-supervisor->dead-ports [nimbus existing-assignments topology->executors topology->alive-executors]
   (let [dead-slots (into [] (for [[tid assignment] existing-assignments
@@ -1262,6 +1277,34 @@
                            nimbus-uptime
                            topology-summaries)
           ))
+
+      (^SupervisorWorkers getSupervisorWorkers [this ^String supervisor-id]
+        (let [storm-cluster-state (:storm-cluster-state nimbus)
+              info (.supervisorInfo storm-cluster-state supervisor-id nil)
+              ports (set (:meta info)) 
+              supervisor-summary (SupervisorSummary. (:hostname info)
+                                                                (:uptime-secs info)
+                                                                (count ports)
+                                                                (count (:used-ports info))
+                                                                supervisor-id)  
+              bases (topology-bases storm-cluster-state)
+              worker-summaries (dofor [[storm-id base] bases :when base]
+                                          (let [assignment (.assignment-info storm-cluster-state storm-id nil)
+                                                topology-conf (try-read-storm-conf conf storm-id)
+                                                topology (read-storm-topology conf storm-id)
+                                                task->component (storm-task-info topology topology-conf)
+                                                port->worker-summ (dofor [[executor [node port]] (:executor->node+port assignment)]
+                                                                            (let [host (-> assignment :node->host (get node))
+                                                                                  
+                                                                                 ]
+                                                                                  worker-summ (WorkerSummary. port storm-id executor)
+                                                                            )
+                                                                   )
+                                               worker-summ (WorkerSummary. port storm-id executor)]
+                                          worker-summ))]
+       (SupervisorWorkers. supervisor-summary worker-summaries)   
+      )
+     
       
       (^TopologyInfo getTopologyInfoWithOpts [this ^String storm-id ^GetInfoOptions options]
         (let [storm-cluster-state (:storm-cluster-state nimbus)
