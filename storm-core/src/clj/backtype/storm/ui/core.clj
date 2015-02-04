@@ -488,6 +488,10 @@
   (with-nimbus nimbus
     (.getNimbusConf ^Nimbus$Client nimbus)))
 
+(defn supervisor-configuration [id]
+  (with-nimbus nimbus
+    (.getSupervisorConf ^Nimbus$Client nimbus id)))
+
 (defn cluster-summary
   ([user]
      (with-nimbus nimbus
@@ -884,6 +888,9 @@
   (GET "/api/v1/supervisor/summary" [:as {:keys [cookies servlet-request]} & m]
        (assert-authorized-user servlet-request "getClusterInfo")
        (json-response (supervisor-summary) (:callback m)))
+  (GET "/api/v1/supervisor/configuration/:id" [:as {:keys [cookies servlet-request]} id & m]
+       (json-response (supervisor-configuration id)
+                      (:callback m) :serialize-fn identity))
   (GET "/api/v1/topology/summary" [:as {:keys [cookies servlet-request]} & m]
        (assert-authorized-user servlet-request "getClusterInfo")
        (json-response (all-topologies-summary) (:callback m)))
