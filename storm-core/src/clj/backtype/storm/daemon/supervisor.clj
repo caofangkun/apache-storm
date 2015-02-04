@@ -483,7 +483,8 @@
                                                 ;; used ports
                                                 (.getMetadata isupervisor)
                                                 (conf SUPERVISOR-SCHEDULER-META)
-                                                ((:uptime supervisor)))))]
+                                                ((:uptime supervisor))
+                                                conf)))]
     (heartbeat-fn)
     ;; should synchronize supervisor so it doesn't launch anything after being down (optimization)
     (schedule-recurring (:heartbeat-timer supervisor)

@@ -1217,6 +1217,11 @@
         (check-authorization! nimbus nil nil "getNimbusConf")
         (to-json (:conf nimbus)))
 
+      (^String getSupervisorConf [this ^String id]
+        (let [storm-cluster-state (:storm-cluster-state nimbus)
+              supervisor-info (.supervisor-info storm-cluster-state id)]
+              (to-json (:supervisor-conf supervisor-info))))
+
       (^String getTopologyConf [this ^String id]
         (let [topology-conf (try-read-storm-conf conf id)
               storm-name (topology-conf TOPOLOGY-NAME)]
