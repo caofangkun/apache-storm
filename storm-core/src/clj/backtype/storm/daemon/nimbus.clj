@@ -478,10 +478,7 @@
                                                                                   if (= supervisor-id node)
                                                                                      ()
                                                                                      () 
-                                                                                  worker-summ (WorkerSummary. port storm-id executor)))
-                                                                       
-
-                                             ]]
+                                                                                  worker-summ (WorkerSummary. port storm-id executor)))]]
                                   worker-summaries))
        port->worker-summaries (->> )))
   

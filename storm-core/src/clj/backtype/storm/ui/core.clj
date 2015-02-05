@@ -29,7 +29,7 @@
             ExecutorStats ExecutorSummary TopologyInfo SpoutStats BoltStats
             ErrorInfo ClusterSummary SupervisorSummary TopologySummary
             Nimbus$Client StormTopology GlobalStreamId RebalanceOptions
-            KillOptions GetInfoOptions NumErrorsChoice])
+            KillOptions GetInfoOptions NumErrorsChoice WorkerSummary])
   (:import [backtype.storm.security.auth AuthUtils ReqContext])
   (:import [backtype.storm.generated AuthorizationException])
   (:import [backtype.storm.security.auth AuthUtils])
@@ -513,7 +513,7 @@
         "executorsTotal" total-executors
         "tasksTotal" total-tasks })))
 
-(defn supervisor-summary [^SupervisorSummary summ]
+(defn supervisor-summary [^SupervisorSummary s]
   ({"id" (.get_supervisor_id s)
        "host" (.get_host s)
        "uptime" (pretty-uptime-sec (.get_uptime_secs s))
@@ -536,19 +536,18 @@
 
 (defn supervisor-page [id window include-sys? user]
   (with-nimbus nimbus
-    (let [window (if window window ":all-time")
-          window-hint (window-hint window)
+    (let [supervisor-conf (from-json (.getSupervisorConf ^Nimbus$Client nimbus id))
           summ->workers (.getSupervisorWorkers ^Nimbus$Client nimbus id)
           summ (.getSupervisorSummary summ->workers)
           workers (.getWorkers summ->workers)]
       (merge
        (supervisor-summary summ)
        {"workers"
-         (for [WorkerSummary t workers]
+         (for [^WorkerSummary t workers]
            {"port" (.get_port t)
              "topology" (.get_topology t)
              "tasks" (.get_tasks t)}) }
-       (supervisor-conf id)))))
+        "configuration" supervisor-conf))))
 
 (defn all-topologies-summary
   ([]
