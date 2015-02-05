@@ -488,10 +488,6 @@
   (with-nimbus nimbus
     (.getNimbusConf ^Nimbus$Client nimbus)))
 
-(defn supervisor-configuration [id]
-  (with-nimbus nimbus
-    (.getSupervisorConf ^Nimbus$Client nimbus id)))
-
 (defn cluster-summary
   ([user]
      (with-nimbus nimbus
@@ -517,10 +513,17 @@
         "executorsTotal" total-executors
         "tasksTotal" total-tasks })))
 
-(defn supervisor-summary
+(defn supervisor-summary [^SupervisorSummary summ]
+  ({"id" (.get_supervisor_id s)
+       "host" (.get_host s)
+       "uptime" (pretty-uptime-sec (.get_uptime_secs s))
+       "slotsTotal" (.get_num_workers s)
+       "slotsUsed" (.get_num_used_workers s)}))
+
+(defn all-supervisors-summary
   ([]
    (with-nimbus nimbus
-                (supervisor-summary
+                (all-supervisors-summary
                   (.get_supervisors (.getClusterInfo ^Nimbus$Client nimbus)))))
   ([summs]
    {"supervisors"
@@ -530,6 +533,22 @@
        "uptime" (pretty-uptime-sec (.get_uptime_secs s))
        "slotsTotal" (.get_num_workers s)
        "slotsUsed" (.get_num_used_workers s)})}))
+
+(defn supervisor-page [id window include-sys? user]
+  (with-nimbus nimbus
+    (let [window (if window window ":all-time")
+          window-hint (window-hint window)
+          summ->workers (.getSupervisorWorkers ^Nimbus$Client nimbus id)
+          summ (.getSupervisorSummary summ->workers)
+          workers (.getWorkers summ->workers)]
+      (merge
+       (supervisor-summary summ)
+       {"workers"
+         (for [WorkerSummary t workers]
+           {"port" (.get_port t)
+             "topology" (.get_topology t)
+             "tasks" (.get_tasks t)}) }
+       (supervisor-conf id)))))
 
 (defn all-topologies-summary
   ([]
@@ -859,6 +878,10 @@
   (with-nimbus nimbus
      (from-json (.getTopologyConf ^Nimbus$Client nimbus topology-id))))
 
+(defn supervisor-config [supervisor-id]
+  (with-nimbus nimbus
+   (from-json (.getSupervisorConf ^Nimbus$Client nimbus supervisor-id))))
+
 (defn check-include-sys?
   [sys?]
   (if (or (nil? sys?) (= "false" sys?)) false true))
@@ -887,10 +910,11 @@
          (json-response (cluster-summary user) (:callback m))))
   (GET "/api/v1/supervisor/summary" [:as {:keys [cookies servlet-request]} & m]
        (assert-authorized-user servlet-request "getClusterInfo")
-       (json-response (supervisor-summary) (:callback m)))
-  (GET "/api/v1/supervisor/configuration/:id" [:as {:keys [cookies servlet-request]} id & m]
-       (json-response (supervisor-configuration id)
-                      (:callback m) :serialize-fn identity))
+       (json-response (all-supervisors-summary) (:callback m)))
+  (GET "/api/v1/supervisor/:id" [:as {:keys [cookies servlet-request]} id & m]
+        (let [user (.getUserName http-creds-handler servlet-request)]
+          (assert-authorized-user servlet-request "getSupervisorWorkers" (supervisor-config id))
+          (json-response (supervisor-page id (:window m) (check-include-sys? (:sys m)) user) (:callback m))))  
   (GET "/api/v1/topology/summary" [:as {:keys [cookies servlet-request]} & m]
        (assert-authorized-user servlet-request "getClusterInfo")
        (json-response (all-topologies-summary) (:callback m)))
