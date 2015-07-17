@@ -4,7 +4,7 @@ Storm is a distributed realtime computation system. Similar to how Hadoop provid
 
 The [Rationale page](http://storm-project.net/documentation/Rationale.html) explains what Storm is and why it was built. [This presentation](http://vimeo.com/40972420) is also a good introduction to the project.
 
-Storm has a website at [storm-project.net](http://storm-project.net). Follow [@stormprocessor](https://twitter.com/stormprocessor) on Twitter for updates on the project.
+Storm has a website at [storm.apache.org](http://storm.apache.org). Follow [@stormprocessor](https://twitter.com/stormprocessor) on Twitter for updates on the project.
 
 ## Documentation
 
@@ -205,6 +205,11 @@ under the License.
 * Shyam Rajendran ([@bourneagain](https://github.com/bourneagain))
 * Reza Farivar ([@rfarivar](https://github.com/rfarivar))
 * Hugo Louro ([@hmcl](https://github.com/hmcl))
+* Xin Wang ([@vesense](https://github.com/vesense))
+* Aaron Dossett ([@dossett](https://github.com/dossett))
+* Charles Chan ([@charleswhchan](https://github.com/charleswhchan))
+* Chuanlei Ni ([@chuanlei](https://github.com/chuanlei))
+* Xingyu Su ([@errordaiwa](https://github.com/errordaiwa))
 
 ## Acknowledgements
 

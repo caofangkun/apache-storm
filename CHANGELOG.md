@@ -12,6 +12,12 @@
  * STORM-160: Allow ShellBolt to set env vars (particularly PATH)
  * STORM-937: Changing noisy log level from info to debug
  * STORM-931: Python Scritps to Produce Formatted JIRA and GitHub Join
+ * STORM-924: Set the file mode of the files included when packaging release packages
+ * STORM-799: Use IErrorReport interface more broadly
+ * STORM-926: change pom to use maven-shade-plugin:2.2
+ * STORM-793: Made change to logviewer.clj in order to remove the invalid http 500 response
+ * STORM-857: create logs metadata dir when running securely
+ * STORM-942: Add FluxParser method parseInputStream() to eliminate disk usage
 
 ## 0.10.0-beta2
  * STORM-843: [storm-redis] Add Javadoc to storm-redis
@@ -74,7 +80,6 @@
  * STORM-735: [storm-redis] Upgrade Jedis to 2.7.0
  * STORM-730: remove extra curly brace
  * STORM-729: Include Executors (Window Hint) if the component is of Bolt type
- * STORM-728: Put emitted and transferred stats under correct columns
  * STORM-727: Storm tests should succeed even if a storm process is running locally.
  * STORM-724: Document RedisStoreBolt and RedisLookupBolt which is missed.
  * STORM-723: Remove RedisStateSetUpdater / RedisStateSetCountQuerier which didn't tested and have a bug
@@ -187,6 +192,9 @@
 
 ## 0.9.6
  * STORM-763: nimbus reassigned worker A to another machine, but other worker's netty client can't connect to the new worker A
+ * STORM-935: Update Disruptor queue version to 2.10.4
+ * STORM-503: Short disruptor queue wait time leads to high CPU usage when idle
+ * STORM-728: Put emitted and transferred stats under correct columns
 
 ## 0.9.5
  * STORM-790: Log "task is null" instead of let worker died when task is null in transfer-fn
