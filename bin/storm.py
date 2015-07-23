@@ -85,6 +85,9 @@ CONFFILE = ""
 JAR_JVM_OPTS = shlex.split(os.getenv('STORM_JAR_JVM_OPTS', ''))
 JAVA_HOME = os.getenv('JAVA_HOME', None)
 JAVA_CMD = 'java' if not JAVA_HOME else os.path.join(JAVA_HOME, 'bin', 'java')
+if JAVA_HOME and not os.path.exists(JAVA_CMD):
+    print "ERROR:  JAVA_HOME is invalid.  Could not find bin/java at %s." % JAVA_HOME
+    sys.exit(1)
 STORM_EXT_CLASSPATH = os.getenv('STORM_EXT_CLASSPATH', None)
 STORM_EXT_CLASSPATH_DAEMON = os.getenv('STORM_EXT_CLASSPATH_DAEMON', None)
 
@@ -228,6 +231,9 @@ def kill(*args):
     the workers and clean up their state. You can override the length
     of time Storm waits between deactivation and shutdown with the -w flag.
     """
+    if not args:
+        print_usage(command="kill")
+        sys.exit(2)
     exec_storm_class(
         "backtype.storm.command.kill_topology",
         args=args,
@@ -240,6 +246,9 @@ def upload_credentials(*args):
 
     Uploads a new set of credentials to a running topology
     """
+    if not args:
+        print_usage(command="upload_credentials")
+        sys.exit(2)
     exec_storm_class(
         "backtype.storm.command.upload_credentials",
         args=args,
@@ -251,6 +260,9 @@ def activate(*args):
 
     Activates the specified topology's spouts.
     """
+    if not args:
+        print_usage(command="activate")
+        sys.exit(2)
     exec_storm_class(
         "backtype.storm.command.activate",
         args=args,
@@ -273,6 +285,9 @@ def deactivate(*args):
 
     Deactivates the specified topology's spouts.
     """
+    if not args:
+        print_usage(command="deactivate")
+        sys.exit(2)
     exec_storm_class(
         "backtype.storm.command.deactivate",
         args=args,
@@ -300,6 +315,9 @@ def rebalance(*args):
     Use the -n and -e switches to change the number of workers or number of executors of a component
     respectively.
     """
+    if not args:
+        print_usage(command="rebalance")
+        sys.exit(2)
     exec_storm_class(
         "backtype.storm.command.rebalance",
         args=args,
@@ -313,6 +331,9 @@ def get_errors(*args):
     the key value pairs for component-name and component-error for the components in error.
     The result is returned in json format.
     """
+    if not args:
+        print_usage(command="get_errors")
+        sys.exit(2)
     exec_storm_class(
         "backtype.storm.command.get_errors",
         args=args,
