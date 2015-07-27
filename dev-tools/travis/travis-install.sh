@@ -19,8 +19,8 @@ NODEJS_VERSION=`node -v`
 echo "Python version : $PYTHON_VERSION"
 echo "Ruby version : $RUBY_VERSION"
 echo "NodeJs version : $NODEJS_VERSION"
-exec /bin/bash
 echo "use /bin/bash"
+export SHELL=/bin/bash
 
 STORM_SRC_ROOT_DIR=$1
 
