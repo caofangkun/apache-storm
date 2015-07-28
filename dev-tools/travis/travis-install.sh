@@ -21,6 +21,7 @@ echo "Ruby version : $RUBY_VERSION"
 echo "NodeJs version : $NODEJS_VERSION"
 echo "use /bin/bash"
 export SHELL=/bin/bash
+exec $SHELL
 
 STORM_SRC_ROOT_DIR=$1
 
