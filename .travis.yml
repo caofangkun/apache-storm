@@ -18,5 +18,7 @@ before_install:
   - nvm install 0.12.2
   - nvm use 0.12.2
   - export SHELL=/bin/bash
+before_script:
+  - export SHELL=/bin/bash
 install: /bin/bash ./dev-tools/travis/travis-install.sh `pwd`
 script: /bin/bash ./dev-tools/travis/travis-script.sh `pwd`
