@@ -10,6 +10,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 language: java
+env:
+  - SHELL=/bin/bash
 jdk:
   - oraclejdk7
   - oraclejdk8
@@ -17,8 +19,5 @@ before_install:
   - rvm use 2.1.5 --install
   - nvm install 0.12.2
   - nvm use 0.12.2
-  - export SHELL=/bin/bash
-before_script:
-  - export SHELL=/bin/bash
 install: /bin/bash ./dev-tools/travis/travis-install.sh `pwd`
 script: /bin/bash ./dev-tools/travis/travis-script.sh `pwd`
